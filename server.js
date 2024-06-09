@@ -1,25 +1,33 @@
 const express = require('express');
 const dotEnv = require('dotenv');
-const http = require('http');
-const WebSocket = require('ws');
 
 dotEnv.config();
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
 
-app.get('/', function (req, res) {
-  res.send('Server is runningggg...');
+const server = require('http').createServer(app);
+const io = require('socket.io')(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
 });
 
-wss.on('connection', (ws) => {
+app.get('/', function (req, res) {
+  res.send('Server is runninggggggggg...');
+});
+
+let users = [];
+
+io.on('connection', (socket) => {
   console.log('New client connected');
 
-  ws.on('message', (message) => {
-    console.log('Received message:', message);
+  socket.on('message', (data) => {
+    console.log('Received message:', data);
+    // Broadcast the message to all connected clients
+    io.emit('message', data);
   });
 
-  ws.on('close', () => {
+  socket.on('disconnect', () => {
     console.log('Client disconnected');
   });
 });
