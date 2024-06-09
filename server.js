@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.get('/', function (req, res) {
-  res.send('Server is runningggg...');
+  res.send('Server is running...');
 });
 
 wss.on('connection', (ws) => {
@@ -17,6 +17,13 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (message) => {
     console.log('Received message:', message);
+
+    // Broadcast the received message to all connected clients
+    wss.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
   });
 
   ws.on('close', () => {
