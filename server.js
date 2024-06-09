@@ -9,7 +9,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 app.get('/', function (req, res) {
-  res.send('Server is running...');
+  res.send('Server is runningggg...');
 });
 
 wss.on('connection', (ws) => {
