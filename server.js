@@ -20,7 +20,7 @@ wss.on('connection', (ws) => {
 
     // Broadcast the received message to all connected clients
     wss.clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(message);
       }
     });
@@ -33,5 +33,5 @@ wss.on('connection', (ws) => {
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
-  console.log('server running at ' + port + '...');
+  console.log('Server running at port ' + port);
 });
