@@ -12,13 +12,15 @@ app.get('/', function (req, res) {
   res.send('Server is running...');
 });
 
+// WebSocket connection handler
 wss.on('connection', (ws) => {
   console.log('New client connected');
 
+  // WebSocket message handler
   ws.on('message', (message) => {
     console.log('Received message:', message);
 
-    // Broadcast the received message to all connected clients
+    // Broadcast the received message to all connected clients except the sender
     wss.clients.forEach((client) => {
       if (client !== ws && client.readyState === WebSocket.OPEN) {
         client.send(message);
@@ -26,6 +28,7 @@ wss.on('connection', (ws) => {
     });
   });
 
+  // WebSocket close handler
   ws.on('close', () => {
     console.log('Client disconnected');
   });
