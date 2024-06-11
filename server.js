@@ -1,35 +1,27 @@
-const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
-
+const express = require('express'); //requires express module
+const socket = require('socket.io'); //requires socket.io module
+const fs = require('fs');
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
+var PORT = process.env.PORT || 3000;
+const server = app.listen(PORT); //tells to host server on localhost:3000
 
-app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.send('Welcome to the root route!');
-});
+//Playing variables:
+app.use(express.static('public')); //show static files in 'public' directory
+console.log('Server is running');
+const io = socket(server);
 
-app.get('/status', (req, res) => {
-    res.send('Server is running');
-});
+var count = 0;
 
+
+//Socket.io Connection------------------
 io.on('connection', (socket) => {
-    console.log('a user connected');
 
-    socket.on('message', (msg) => {
-        console.log('message: ' + JSON.stringify(msg));
-        io.emit('Update', msg);
-    });
+    console.log("New socket connection: " + socket.id)
 
-    socket.on('disconnect', () => {
-        console.log('user disconnected');
-    });
-});
-
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
-    console.log(`listening on *:${PORT}`);
-});
+    socket.on('counter', (message) => {
+        count++;
+        console.log(count)
+        io.emit('counter', message);
+    })
+})
