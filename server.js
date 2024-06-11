@@ -1,17 +1,25 @@
-const WebSocket = require('ws');
+const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 
-const wss = new WebSocket.Server({ port: 8080 });
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
 
-wss.on('connection', (ws) => {
-    ws.on('message', (message) => {
-        wss.clients.forEach((client) => {
-            if (client !== ws && client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
-        });
+io.on('connection', (socket) => {
+    console.log('a user connected');
+
+    socket.on('message', (msg) => {
+        console.log('message: ' + JSON.stringify(msg));
+        io.emit('Update', msg);
     });
 
-    ws.send('Welcome to the WebSocket server');
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
 });
 
-console.log('WebSocket server is running on ws://localhost:8080');
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+    console.log(`listening on *:${PORT}`);
+});
