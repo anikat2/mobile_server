@@ -6,6 +6,16 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+app.use(express.json());
+
+app.get('/', (req, res) => {
+    res.send('Welcome to the root route!');
+});
+
+app.get('/status', (req, res) => {
+    res.send('Server is running');
+});
+
 io.on('connection', (socket) => {
     console.log('a user connected');
 
